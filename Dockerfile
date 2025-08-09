@@ -3,7 +3,6 @@ FROM golang:1.24.6-alpine AS builder
 
 WORKDIR /app
 
-# Copy go.mod and go.sum first to leverage Docker's cache
 COPY go.mod ./
 # COPY go.sum ./
 RUN go mod download
@@ -12,15 +11,12 @@ RUN go mod download
 COPY . .
 
 # Build the Go application
-# CGO_ENABLED=0 disables CGO, creating a statically linked binary
-# -o specifies the output binary name
-# ./... builds all packages in the current directory and its subdirectories
-RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o main ./...
+RUN go build -o main ./...
 
 # Stage 2: Runner
 FROM alpine:latest
 
-WORKDIR /root/
+WORKDIR /app/
 
 # Copy the compiled binary from the builder stage
 COPY --from=builder /app/main .
