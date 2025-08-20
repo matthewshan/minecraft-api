@@ -10,6 +10,6 @@ public class GetPlayersResponse
     /// <summary>
     /// Information on players
     /// </summary>
-    public List<Player> Players { get; set; }
+    public List<Player> Players { get; set; } = [];
 }
 
