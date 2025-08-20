@@ -1,21 +1,21 @@
 'use client';
 
-import { signIn, signOut, useSession } from "next-auth/react";
+import { useState, useEffect } from 'react';
 
 export default function Home() {
-  // const { data: session } = useSession();
+  const [data, setData] = useState<unknown>('');
 
+  useEffect(() => {
+    const fetchData = async () => {
+      const response = await fetch('/api/mc/list');
+      console.log(response);
+      // const result = await response.json();
+      setData(response);
+    };
+    fetchData();
+  }, []);
   return (
     <div>
-      todo
-      {/* {!session ? (
-        <button onClick={() => signIn("discord")}>Login with Discord</button>
-      ) : (
-        <>
-          <p>Welcome, {session.user?.name}</p>
-          <button onClick={() => signOut()}>Logout</button>
-        </>
-      )} */}
     </div>
   );
 }
