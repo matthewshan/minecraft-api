@@ -18,7 +18,7 @@ public class RconClient(IOptions<RconSettings> settings) : IRconClient
         await rcon.ConnectAsync();
 
         // Send Command
-        var command = await rcon.SendCommandAsync("list");
+        var command = await rcon.SendCommandAsync("list", new TimeSpan(0, 0, 5));
 
         return RemoveMinecraftColors(command);
     }

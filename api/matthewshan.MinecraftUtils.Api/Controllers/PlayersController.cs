@@ -11,12 +11,20 @@ public class PlayersController(IMinecraftService minecraftService, ILogger<Playe
     [HttpGet]
     public async Task<ActionResult<GetPlayersResponse>> GetPlayers(CancellationToken cancellationToken)
     {
-        logger.LogInformation("Received request to get online players");
-        var result = await minecraftService.GetOnlinePlayersAsync(cancellationToken);
-
-        return Ok(new GetPlayersResponse
+        try
         {
-            Players = result
-        });
+            logger.LogInformation("Received request to get online players");
+            var result = await minecraftService.GetOnlinePlayersAsync(cancellationToken);
+
+            return Ok(new GetPlayersResponse
+            {
+                Players = result
+            });
+        }
+        catch(Exception ex)
+        {
+            logger.LogError(ex, "An unexpected error occurred...");
+            return StatusCode(500);
+        }
     }
 }

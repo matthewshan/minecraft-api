@@ -55,9 +55,11 @@ public class Program
                 Predicate = r => r.Tags.Contains("live")
             });
         }
+        else {
+            app.UseHttpsRedirection();
+            app.UseAuthorization();
+        }
 
-        app.UseHttpsRedirection();
-        app.UseAuthorization();
         app.MapControllers();
         app.Run();
     }
