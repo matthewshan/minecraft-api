@@ -9,11 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@opentelemetry/api-logs": "^0.203.0",
-    "@opentelemetry/exporter-trace-otlp-http": "^0.203.0",
-    "@opentelemetry/instrumentation": "^0.203.0",
-    "@opentelemetry/sdk-logs": "^0.203.0",
-    "@opentelemetry/sdk-trace-node": "^2.0.1",
     "@vercel/otel": "^1.13.0",
     "axios": "^1.11.0",
     "next": "15.4.6",
