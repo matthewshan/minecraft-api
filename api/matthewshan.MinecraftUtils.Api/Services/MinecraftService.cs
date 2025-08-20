@@ -26,7 +26,7 @@ public class MinecraftService(IRconClient rconClient, IMojangApiClient mojangApi
 
         if (parts.Length < 2 || string.IsNullOrWhiteSpace(parts[1]))
         {
-            memoryCache.Set(nameof(GetOnlinePlayersAsync), (List<Player>)[], TimeSpan.FromSeconds(5));
+            memoryCache.Set(nameof(GetOnlinePlayersAsync), (List<Player>)[], TimeSpan.FromSeconds(1));
             return [];
         }
 
@@ -38,7 +38,7 @@ public class MinecraftService(IRconClient rconClient, IMojangApiClient mojangApi
         // Don't call Mojang API if empty list
         if (usernames.Count == 0)
         {
-            memoryCache.Set(nameof(GetOnlinePlayersAsync), (List<Player>)[], TimeSpan.FromSeconds(30));
+            memoryCache.Set(nameof(GetOnlinePlayersAsync), (List<Player>)[], TimeSpan.FromSeconds(1));
             return [];
         }
 
@@ -51,7 +51,7 @@ public class MinecraftService(IRconClient rconClient, IMojangApiClient mojangApi
             Uuid = mojangResponse.FirstOrDefault(x => x.Name == username)?.Id
         }).ToList();
 
-        memoryCache.Set(nameof(GetOnlinePlayersAsync), players, TimeSpan.FromSeconds(30));
+        memoryCache.Set(nameof(GetOnlinePlayersAsync), players, TimeSpan.FromSeconds(5));
         return players;
     }
 }
