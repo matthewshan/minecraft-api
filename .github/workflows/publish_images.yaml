@@ -1,0 +1,74 @@
+name: Build and Publish API and/or UI Docker Image
+
+on:
+  workflow_dispatch: 
+    inputs:
+      component:
+        description: 'Which component to build and publish'
+        required: true
+        type: choice
+        options:
+          - both
+          - api
+          - ui
+
+env:
+  REGISTRY: ghcr.io
+  API_IMAGE_NAME: ${{ github.repository }}-api
+  UI_IMAGE_NAME: ${{ github.repository }}-ui
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Extract metadata for Docker
+        id: apiMeta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.API_IMAGE_NAME }}
+          tags: |
+            type=sha,format=short,prefix=
+            latest
+
+      - name: Extract metadata for Docker
+        id: uiMeta
+        uses: docker/metadata-action@v4
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.UI_IMAGE_NAME }}
+          tags: |
+            type=sha,format=short,prefix=
+            latest 
+
+      - name: Build and push API Docker image
+        if: ${{ github.event.inputs.component == 'api' || github.event.inputs.component == 'both' }}
+        uses: docker/build-push-action@v4
+        with:
+          context: ./api
+          file: ./api/matthewshan.MinecraftUtils.Api/Dockerfile
+          push: true
+          tags: ${{ steps.apiMeta.outputs.tags }}
+          labels: ${{ steps.apiMeta.outputs.labels }}
+
+      - name: Build and push UI Docker image
+        if: ${{ github.event.inputs.component == 'ui' || github.event.inputs.component == 'both' }}
+        uses: docker/build-push-action@v4
+        with:
+          context: ./ui
+          push: true
+          tags: ${{ steps.uiMeta.outputs.tags }}
+          labels: ${{ steps.uiMeta.outputs.labels }}
+
