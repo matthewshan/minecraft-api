@@ -2,8 +2,11 @@
 
 import { useState, useEffect } from 'react';
 import { PlayerListResponse } from './models/player';
+import { PlayerList } from './components/PlayerList';
 
 export default function Home() {
+  const [loading, setLoading] = useState(true);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [data, setData] = useState<PlayerListResponse>({ players: [] });
 
   useEffect(() => {
@@ -12,6 +15,8 @@ export default function Home() {
       const data: PlayerListResponse = await response.json();
       
       setData(data);
+      setLoading(false);
+      setLastUpdated(new Date());
     };
     fetchData();
   }, []);
@@ -19,18 +24,25 @@ export default function Home() {
   return (
     <div className="flex flex-col items-start min-h-screen p-8">
       <h1 className="text-2xl font-bold mb-4">Online Players</h1>
-      {data && data.players.length > 0 ? ( 
-      <div className="space-y-4">
-      {data.players.map((player) => (
-      <div key={player.uuid} className="flex items-center gap-2">
-        <img src={`https://mc-heads.net/avatar/${player.uuid}`} className="w-8 h-8"></img> 
-        <span>{player.username}</span>
-      </div>
-      ))}
-      </div>
-      ) : (
-      <p>No players online.</p>
-      )}
+      {
+        loading && <p>Loading...</p>
+      }
+      {
+        !loading && data.players.length === 0 && <p>No players online.</p>
+      }
+      {
+        !loading && data.players.length > 0 && <PlayerList data={data} />
+      }
+
+    {
+      lastUpdated && (
+        <p className="text-sm text-gray-500 mt-4">
+          Last updated: {lastUpdated.toLocaleTimeString()}
+        </p>
+      )
+    }
     </div>
   );
 }
+
+
